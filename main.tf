@@ -12,10 +12,20 @@ provider "aws" {
   profile = var.profile
 }
 
+module "lambdas" {
+  source = "./modules/lambdas"
+  lambda_name = "test-lambda"
+  lambda_description = "This is a test lambda"
+}
+
 module "api_gateway" {
   source          = "./modules/api_gateway"
   api_description = "This is a test API Gateway"
   api_name        = "test-api-gateway"
+  budget_invoke_arn = module.lambdas.lambda_invoke_arn
+  budget_arn = module.lambdas.lambda_arn
 }
 
-# TODO: add RDS module
+module "rds" {
+  source = "./modules/rds"
+}

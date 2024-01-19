@@ -26,11 +26,11 @@ resource "aws_iam_role_policy_attachment" "budget_policy" {
 data "archive_file" "lambda" {
   type        = "zip"
   source_dir  = "${path.root}/lambdas/budget-handler"
-  output_path = "${path.root}/modules/api_gateway/lambdas/lambda_function_payload.zip"
+  output_path = "${path.root}/modules/lambdas/budget_lambda.zip"
 }
 
 resource "aws_lambda_function" "test_lambda" {
-  filename      = "${path.root}/modules/api_gateway/lambdas/lambda_function_payload.zip"
+  filename      = "${path.root}/modules/lambdas/budget_lambda.zip"
   handler       = "main.handler"
   role          = aws_iam_role.budget_lambda_role.arn
   function_name = var.lambda_name
