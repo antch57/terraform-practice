@@ -33,7 +33,7 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-.terraform
-.terraform.lock.hcl
-
-lambda_function_payload.zip
+budget_lambda.zip
+.venv
+__pycache__/
+.DS_Store

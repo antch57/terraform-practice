@@ -5,16 +5,16 @@ resource "aws_apigatewayv2_api" "finance-tool-api" {
 }
 
 resource "aws_apigatewayv2_integration" "lambda_integration" {
-  api_id             = aws_apigatewayv2_api.finance-tool-api.id
-  integration_type   = "AWS_PROXY"
-  description        = "Lambda integration for budget tool"
-  integration_uri    = var.budget_invoke_arn
+  api_id           = aws_apigatewayv2_api.finance-tool-api.id
+  integration_type = "AWS_PROXY"
+  description      = "Lambda integration for budget tool"
+  integration_uri  = var.budget_lambda_invoke_arn
 }
 
 resource "aws_apigatewayv2_route" "finance-tool-route" {
-  api_id        = aws_apigatewayv2_api.finance-tool-api.id
-  route_key     = "GET /budget"
-  target        = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  api_id    = aws_apigatewayv2_api.finance-tool-api.id
+  route_key = "GET /budget"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 
 resource "aws_apigatewayv2_stage" "finance-tool-stage" {
@@ -24,10 +24,11 @@ resource "aws_apigatewayv2_stage" "finance-tool-stage" {
   auto_deploy = true
 }
 
+# TODO: make path dynamic
 # Allow API Gateway to invoke lambda
 resource "aws_lambda_permission" "apigw_lambda_permission" {
   action        = "lambda:InvokeFunction"
-  function_name = var.budget_arn
+  function_name = var.budget_lambda_arn
   principal     = "apigateway.amazonaws.com"
-  source_arn = "${aws_apigatewayv2_api.finance-tool-api.execution_arn}/*/*/budget"
+  source_arn    = "${aws_apigatewayv2_api.finance-tool-api.execution_arn}/*/*/budget"
 }
