@@ -4,6 +4,6 @@ output "rds_sg_id" {
 }
 
 output "rds_hostname" {
-  value       = aws_db_instance.finance-cluster.address
+  value       = aws_db_instance.db_instance.address
   description = "value of the rds host name"
 }

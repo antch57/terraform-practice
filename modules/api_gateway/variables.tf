@@ -14,12 +14,12 @@ variable "api_protocol_type" {
   default     = "HTTP"
 }
 
-variable "budget_lambda_invoke_arn" {
+variable "lambda_1_invoke_arn" {
   description = "invoke arn of the lambda integration for budget tool"
   type        = string
 }
 
-variable "budget_lambda_arn" {
+variable "lambda_1_arn" {
   description = "arn of the lambda integration for budget tool"
   type        = string
 }
