@@ -52,3 +52,22 @@ resource "aws_vpc_security_group_egress_rule" "outbound_lambda_1_rds" {
   ip_protocol                  = "tcp"
   referenced_security_group_id = module.rds.rds_sg_id
 }
+
+# allow secret manager access
+resource "aws_vpc_security_group_ingress_rule" "allow_lambda_1_to_secret_manager" {
+  security_group_id = var.vpc_endpoint_secret_manager_sg_id
+
+  from_port                    = 443
+  to_port                      = 443
+  ip_protocol                  = "tcp"
+  referenced_security_group_id = module.lambdas.lambda_1_sg_id
+}
+
+resource "aws_vpc_security_group_egress_rule" "outbound_lambda_1_secret_manager" {
+  security_group_id = module.lambdas.lambda_1_sg_id
+
+  from_port                    = 443
+  to_port                      = 443
+  ip_protocol                  = "tcp"
+  referenced_security_group_id = var.vpc_endpoint_secret_manager_sg_id
+}

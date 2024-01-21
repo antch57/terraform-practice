@@ -40,14 +40,6 @@ resource "aws_iam_role_policy_attachment" "budget_lambda_vpc_access" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 
-# FIXME: fix this so it bundles the python package correctly
-# Grab lambda src code
-data "archive_file" "lambda_1_zip" {
-  type        = "zip"
-  source_dir  = "${path.root}/lambdas/budget-handler"
-  output_path = "${path.root}/modules/lambdas/budget_lambda_backup.zip"
-}
-
 # security group for lambda
 resource "aws_security_group" "lambda_1_sg" {
   name        = "lambda_1_sg"
@@ -63,15 +55,23 @@ data "aws_subnets" "existing_subnets" {
   }
 }
 
+# FIXME: auto package python dependencies and src code
+# TODO: pip install -r requirements.txt -t package/ && cp main.py package/ && cd package/ && zip -r ../budget_lambda.zip .
+data "archive_file" "name" {
+  source_dir  = "${path.root}/lambdas/budget-handler/package"
+  output_path = "${path.root}/lambdas/budget-handler/budget_lambda.zip"
+  type        = "zip"
+}
+
 resource "aws_lambda_function" "lambda_1" {
-  filename         = data.archive_file.lambda_1_zip.output_path
+  filename         = data.archive_file.name.output_path
   handler          = "main.handler"
   role             = aws_iam_role.lambda_1_role.arn
   function_name    = var.lambda_name
   description      = var.lambda_description
   runtime          = "python3.12"
   timeout          = 10
-  source_code_hash = data.archive_file.lambda_1_zip.output_base64sha256
+  source_code_hash = data.archive_file.name.output_base64sha256
 
   vpc_config {
     subnet_ids         = data.aws_subnets.existing_subnets.ids

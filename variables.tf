@@ -11,3 +11,7 @@ variable "profile" {
 variable "vpc_id" {
   type = string
 }
+
+variable "vpc_endpoint_secret_manager_sg_id" {
+  type = string
+}
