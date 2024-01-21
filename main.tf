@@ -23,6 +23,7 @@ module "lambdas" {
   lambda_description = "This is a test lambda"
   vpc_id             = var.vpc_id
   rds_hostname       = module.rds.rds_hostname
+  rds_secret_arn     = module.rds.rds_secret_manager_arn
 }
 
 module "api_gateway" {

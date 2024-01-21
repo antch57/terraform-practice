@@ -17,3 +17,8 @@ variable "rds_hostname" {
   description = "the hostname of the rds instance"
   type        = string
 }
+
+variable "rds_secret_arn" {
+  description = "the arn of the rds secret"
+  type        = string
+}

@@ -5,10 +5,8 @@ import boto3
 import mysql.connector
 
 rds_hostname = os.environ["RDS_HOSTNAME"]
+secrets_manager_arn = os.environ["RDS_SECRET_ARN"]
 secrets_manager_client = boto3.client("secretsmanager")
-
-# FIXME: should be passed in as an env var
-secrets_manager_arn = ""
 
 
 def handler(event, context):

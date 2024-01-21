@@ -12,25 +12,22 @@ data "aws_iam_policy_document" "lambda_trust_policy" {
   }
 }
 
-resource "aws_iam_policy" "lambda_1_secret_manager_policy" {
-  name = "lambda_1_secret_manager"
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "secretsmanager:GetSecretValue",
-        ]
-        Effect   = "Allow"
-        Resource = "*" # FIXME: change to specific secret
-      },
-    ]
-  })
+data "aws_iam_policy_document" "lambda_secret_manager" {
+  statement {
+    effect    = "Allow"
+    actions   = ["secretsmanager:GetSecretValue"]
+    resources = [var.rds_secret_arn]
+  }
 }
 
 resource "aws_iam_role" "lambda_1_role" {
   name               = "lambda_1_role"
   assume_role_policy = data.aws_iam_policy_document.lambda_trust_policy.json
+
+  inline_policy {
+    name   = "lambda_1_secret_manager_policy"
+    policy = data.aws_iam_policy_document.lambda_secret_manager.json
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "budget_lambda_policy" {
@@ -41,11 +38,6 @@ resource "aws_iam_role_policy_attachment" "budget_lambda_policy" {
 resource "aws_iam_role_policy_attachment" "budget_lambda_vpc_access" {
   role       = aws_iam_role.lambda_1_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
-}
-
-resource "aws_iam_role_policy_attachment" "budget_lambda_secret_manager_attach" {
-  role       = aws_iam_role.lambda_1_role.name
-  policy_arn = aws_iam_policy.lambda_1_secret_manager_policy.arn
 }
 
 # FIXME: fix this so it bundles the python package correctly
@@ -71,7 +63,6 @@ data "aws_subnets" "existing_subnets" {
   }
 }
 
-# TODO: pass secrets manager arn to lambda
 resource "aws_lambda_function" "lambda_1" {
   filename         = data.archive_file.lambda_1_zip.output_path
   handler          = "main.handler"
@@ -89,7 +80,8 @@ resource "aws_lambda_function" "lambda_1" {
 
   environment {
     variables = {
-      RDS_HOSTNAME = var.rds_hostname
+      RDS_HOSTNAME   = var.rds_hostname
+      RDS_SECRET_ARN = var.rds_secret_arn
     }
   }
 }
