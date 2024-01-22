@@ -1,10 +1,15 @@
-variable "lambda_name" {
+variable "lambda_1_name" {
   description = "The name of the Lambda"
   type        = string
 }
 
-variable "lambda_description" {
+variable "lambda_1_description" {
   description = "The description of the Lambda"
+  type        = string
+}
+
+variable "lambda_1_repo_name" {
+  description = "The name of the ECR repo"
   type        = string
 }
 

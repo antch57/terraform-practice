@@ -55,23 +55,20 @@ data "aws_subnets" "existing_subnets" {
   }
 }
 
-# FIXME: auto package python dependencies and src code
-# TODO: pip install -r requirements.txt -t package/ && cp main.py package/ && cd package/ && zip -r ../budget_lambda.zip .
-data "archive_file" "name" {
-  source_dir  = "${path.root}/lambdas/budget-handler/package"
-  output_path = "${path.root}/lambdas/budget-handler/budget_lambda.zip"
-  type        = "zip"
+data "aws_ecr_image" "lambda_1" {
+  repository_name = var.lambda_1_repo_name
+  image_tag = "latest"
 }
 
 resource "aws_lambda_function" "lambda_1" {
-  filename         = data.archive_file.name.output_path
+  image_uri        = data.aws_ecr_image.lambda_1.image_uri
   handler          = "main.handler"
   role             = aws_iam_role.lambda_1_role.arn
-  function_name    = var.lambda_name
-  description      = var.lambda_description
+  function_name    = var.lambda_1_name
+  description      = var.lambda_1_description
   runtime          = "python3.12"
   timeout          = 10
-  source_code_hash = data.archive_file.name.output_base64sha256
+  source_code_hash = data.aws_ecr_image.lambda_1.image_digest
 
   vpc_config {
     subnet_ids         = data.aws_subnets.existing_subnets.ids

@@ -14,4 +14,10 @@ variable "vpc_id" {
 
 variable "vpc_endpoint_secret_manager_sg_id" {
   type = string
+  description = "vpc endpoint security group id"
+}
+
+variable "lambda_1_repo_name" {
+  type = string
+  description = "lambda_1 ecr repo name"
 }
