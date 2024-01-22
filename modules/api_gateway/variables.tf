@@ -15,11 +15,11 @@ variable "api_protocol_type" {
 }
 
 variable "lambda_1_invoke_arn" {
-  description = "invoke arn of the lambda integration for budget tool"
+  description = "invoke arn of the lambda integration for lambda_1"
   type        = string
 }
 
 variable "lambda_1_arn" {
-  description = "arn of the lambda integration for budget tool"
+  description = "arn of the lambda integration for lamdba_1"
   type        = string
 }

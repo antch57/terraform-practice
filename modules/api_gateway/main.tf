@@ -7,13 +7,13 @@ resource "aws_apigatewayv2_api" "api" {
 resource "aws_apigatewayv2_integration" "lambda_integration" {
   api_id           = aws_apigatewayv2_api.api.id
   integration_type = "AWS_PROXY"
-  description      = "Lambda integration for budget tool"
+  description      = "Lambda integration"
   integration_uri  = var.lambda_1_invoke_arn
 }
 
 resource "aws_apigatewayv2_route" "budget_route" {
   api_id    = aws_apigatewayv2_api.api.id
-  route_key = "GET /budget"
+  route_key = "GET /lambda_1"
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 
@@ -30,5 +30,5 @@ resource "aws_lambda_permission" "apigw_lambda_permission" {
   action        = "lambda:InvokeFunction"
   function_name = var.lambda_1_arn
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_apigatewayv2_api.api.execution_arn}/*/*/budget"
+  source_arn    = "${aws_apigatewayv2_api.api.execution_arn}/*/*/lambda_1"
 }

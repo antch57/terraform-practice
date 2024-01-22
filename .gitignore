@@ -33,8 +33,6 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-lambdas/budget-handler/package/
-budget_lambda.zip
 .venv
 __pycache__/
 .DS_Store

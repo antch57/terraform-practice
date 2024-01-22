@@ -6,7 +6,7 @@ import mysql.connector
 
 rds_hostname = os.environ["RDS_HOSTNAME"]
 secrets_manager_arn = os.environ["RDS_SECRET_ARN"]
-secrets_manager_client = boto3.client("secretsmanager")
+secrets_manager_client = boto3.client("secretsmanager", region_name="us-west-2")
 
 
 def handler(event, context):
