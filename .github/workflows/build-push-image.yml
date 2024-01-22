@@ -8,9 +8,10 @@ on:
   workflow_dispatch:
     inputs:
       create_ecr_repos:
+        type: boolean
         description: 'Create ECR repositories?'
         required: false
-        default: 'no'
+        default: false
 
 # allow for github actions to talk to aws
 permissions:
@@ -32,7 +33,7 @@ jobs:
 
       - name: Create ECR repository if it doesn't exist
         run: |
-          if [ "${{ github.event.inputs.create_ecr_repo }}" = "yes" ]; then
+          if [ "${{ github.event.inputs.create_ecr_repos }}" = "yes" ]; then
           aws ecr describe-repositories --repository-names lambda_1 || \
           aws ecr create-repository --repository-name lambda_1
           fi
