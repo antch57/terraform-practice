@@ -18,13 +18,13 @@ module "rds" {
 }
 
 module "lambdas" {
-  source             = "./modules/lambdas"
+  source               = "./modules/lambdas"
   lambda_1_name        = "test-lambda"
   lambda_1_description = "This is a test lambda"
-  vpc_id             = var.vpc_id
-  rds_hostname       = module.rds.rds_hostname
-  rds_secret_arn     = module.rds.rds_secret_manager_arn
-  lambda_1_repo_name = var.lambda_1_repo_name
+  vpc_id               = var.vpc_id
+  rds_hostname         = module.rds.rds_hostname
+  rds_secret_arn       = module.rds.rds_secret_manager_arn
+  lambda_1_repo_name   = var.lambda_1_repo_name
 }
 
 module "api_gateway" {

@@ -55,20 +55,18 @@ data "aws_subnets" "existing_subnets" {
   }
 }
 
-data "aws_ecr_image" "lambda_1" {
+data "aws_ecr_image" "lambda_1_image" {
   repository_name = var.lambda_1_repo_name
-  image_tag = "latest"
+  most_recent     = true
 }
 
 resource "aws_lambda_function" "lambda_1" {
-  image_uri        = data.aws_ecr_image.lambda_1.image_uri
-  handler          = "main.handler"
-  role             = aws_iam_role.lambda_1_role.arn
-  function_name    = var.lambda_1_name
-  description      = var.lambda_1_description
-  runtime          = "python3.12"
-  timeout          = 10
-  source_code_hash = data.aws_ecr_image.lambda_1.image_digest
+  package_type  = "Image"
+  image_uri     = data.aws_ecr_image.lambda_1_image.image_uri
+  role          = aws_iam_role.lambda_1_role.arn
+  function_name = var.lambda_1_name
+  description   = var.lambda_1_description
+  timeout       = 10
 
   vpc_config {
     subnet_ids         = data.aws_subnets.existing_subnets.ids
