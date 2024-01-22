@@ -38,24 +38,9 @@ jobs:
           aws ecr create-repository --repository-name lambda_1
           fi
 
-      - name: Build image
+      - name: Build and push
         run: |
           aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 421239144093.dkr.ecr.us-west-2.amazonaws.com
           docker build -t lambda_1 lambdas/lambda_1
           docker tag lambda_1:latest 421239144093.dkr.ecr.us-west-2.amazonaws.com/lambda_1:latest
-
-      - name: Check if image digest is different
-        id: check-digest
-        run: |
-          LOCAL_DIGEST=$(docker inspect -f '{{.Id}}' lambda_1:latest)
-          REMOTE_DIGEST=$(aws ecr describe-images --repository-name lambda_1 --image-ids imageTag=latest --query 'imageDetails[*].imageDigest' --output text)
-          if [ "$LOCAL_DIGEST" != "$REMOTE_DIGEST" ]; then
-            echo "digest-differs=true" >> $GITHUB_OUTPUT
-          else
-            echo "digest-differs=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Push
-        if: steps.check-digest.outputs.digest-differs == 'true'
-        run: |
           docker push 421239144093.dkr.ecr.us-west-2.amazonaws.com/lambda_1:latest
