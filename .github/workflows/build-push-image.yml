@@ -40,6 +40,6 @@ jobs:
       - name: Build and push
         run: |
           aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 421239144093.dkr.ecr.us-west-2.amazonaws.com
-          docker build -t lambda_1 .
+          docker build -t lambda_1 lambdas/lambda_1
           docker tag lambda_1:latest 421239144093.dkr.ecr.us-west-2.amazonaws.com/lambda_1:latest
           docker push 421239144093.dkr.ecr.us-west-2.amazonaws.com/lambda_1:latest
