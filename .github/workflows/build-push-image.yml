@@ -50,9 +50,9 @@ jobs:
           LOCAL_DIGEST=$(docker inspect -f '{{.Id}}' lambda_1:latest)
           REMOTE_DIGEST=$(aws ecr describe-images --repository-name lambda_1 --image-ids imageTag=latest --query 'imageDetails[*].imageDigest' --output text)
           if [ "$LOCAL_DIGEST" != "$REMOTE_DIGEST" ]; then
-            echo "::set-output name=digest-differs::true"
+            echo "digest-differs=true" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=digest-differs::false"
+            echo "digest-differs=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Push
