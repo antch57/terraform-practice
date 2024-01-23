@@ -5,10 +5,17 @@ terraform {
       version = "5.32.1"
     }
   }
+
+  backend "s3" {
+    bucket         = "terraform.practice.state"
+    key            = "state/terraform.tfstate"
+    region         = "us-west-2"
+    encrypt        = true
+    dynamodb_table = "terraform_practice_state_lock"
+  }
 }
 
 provider "aws" {
-  region  = var.region
   profile = var.profile
 }
 
@@ -19,7 +26,7 @@ module "rds" {
 
 module "lambdas" {
   source               = "./modules/lambdas"
-  lambda_1_name        = "test-lambda"
+  lambda_1_name        = "lambda_1"
   lambda_1_description = "This is a test lambda"
   vpc_id               = var.vpc_id
   rds_hostname         = module.rds.rds_hostname

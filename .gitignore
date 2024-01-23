@@ -33,6 +33,8 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+.terraform
+
 .venv
 __pycache__/
 .DS_Store
