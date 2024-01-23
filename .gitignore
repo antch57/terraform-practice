@@ -38,3 +38,4 @@ terraform.rc
 .venv
 __pycache__/
 .DS_Store
+config.s3.tfbackend

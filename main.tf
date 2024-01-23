@@ -6,13 +6,8 @@ terraform {
     }
   }
 
-  backend "s3" {
-    bucket         = "terraform.practice.state"
-    key            = "state/terraform.tfstate"
-    region         = "us-west-2"
-    encrypt        = true
-    dynamodb_table = "terraform_practice_state_lock"
-  }
+  # configure the S3 backend at'example.s3.tfbackend'.
+  backend "s3" {}
 }
 
 provider "aws" {
