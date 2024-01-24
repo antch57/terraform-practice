@@ -2,14 +2,20 @@ import json
 import os
 
 import boto3
-import mysql.connector
+from src.db import db_connection
 
+# environment variables
+aws_region = os.environ["AWS_REGION"]
 rds_hostname = os.environ["RDS_HOSTNAME"]
 secrets_manager_arn = os.environ["RDS_SECRET_ARN"]
-secrets_manager_client = boto3.client("secretsmanager", region_name="us-west-2")
+
+# boto3 clients
+secrets_manager_client = boto3.client("secretsmanager", region_name=aws_region)
+s3_client = boto3.client("s3", region_name=aws_region)
 
 
 def handler(event, context):
+    db = None
     try:
         secret_value_response = secrets_manager_client.get_secret_value(
             SecretId=secrets_manager_arn
@@ -17,21 +23,19 @@ def handler(event, context):
 
         secret_value = json.loads(secret_value_response.get("SecretString"))
 
-        print("Hello from Lambda! Lets try to connect to db")
-        cnx = mysql.connector.connect(
+        print("Hello from Lambda! lets use this db module")
+        db = db_connection.DBConnection(
             user=secret_value["username"],
             password=secret_value["password"],
             host=rds_hostname,
-            port=3306,
-            auth_plugin="mysql_native_password",
+            database="",
         )
 
-        cursor = cnx.cursor()
+        db.connect()
         query = "SELECT 1;"
-        cursor.execute(query)
+        rows = db.execute(query)
 
-        results = cursor.fetchall()
-        for row in results:
+        for row in rows:
             print(row)
 
         print(json.dumps(event))
@@ -39,7 +43,9 @@ def handler(event, context):
     except Exception as e:
         print(f"Error: {e}")
         return {"statusCode": 500, "body": "lambda failed!"}
-
     finally:
-        cnx.close()
-        print("db connection closed")
+        if db is not None:
+            db.close()
+            print("db connection closed")
+        else:
+            print("no db connection to close")

@@ -1,3 +1,4 @@
+# FIXME: setup multi account
 terraform {
   required_providers {
     aws = {
